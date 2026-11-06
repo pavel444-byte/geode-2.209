@@ -5,6 +5,7 @@
 #include <Geode/utils/web.hpp>
 #include <chrono>
 #include <matjson.hpp>
+#include <variant>
 #include <vector>
 
 using namespace geode::prelude;
@@ -134,6 +135,9 @@ namespace server {
         Downloads,
         RecentlyUpdated,
         RecentlyPublished,
+        Oldest,
+        Name,
+        NameReverse,
     };
 
     static const char* sortToString(ModsSort sorting);

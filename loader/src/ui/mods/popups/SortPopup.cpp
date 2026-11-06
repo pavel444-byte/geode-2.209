@@ -1,18 +1,22 @@
 #include "SortPopup.hpp"
 
+#include <Geode/ui/Label.hpp>
+
 bool SortPopup::init(ModListSource* src) {
-    if (!GeodePopup::init(230.f, 165.f))
+    auto opts = src->getSortingOptions();
+    auto height = opts.size() * 25.f;
+    if (!GeodePopup::init(230.f, 50 + height))
         return false;
-    
+
     m_noElasticity = true;
     m_source = src;
 
     this->setTitle("Search Sorting");
 
     auto container = CCNode::create();
-    container->setContentSize({ 200, 115 });
+    container->setContentSize({ 200, height });
 
-    for (auto const& [sort, name] : src->getSortingOptions()) {
+    for (auto const& [sort, name] : opts) {
         auto node = CCMenu::create();
         node->setContentSize({ container->getContentWidth(), 22 });
 
@@ -28,7 +32,7 @@ bool SortPopup::init(ModListSource* src) {
         node->addChildAtPosition(toggle, Anchor::Left, ccp(15, 0));
         m_options.push_back(toggle);
 
-        auto label = CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
+        auto label = Label::create(std::move(name), "bigFont.fnt");
         label->setScale(.5f);
         node->addChildAtPosition(label, Anchor::Left, ccp(30, 0), ccp(0, .5f));
 
@@ -36,13 +40,13 @@ bool SortPopup::init(ModListSource* src) {
     }
 
     container->setLayout(ColumnLayout::create()->setAxisReverse(true));
-    m_mainLayer->addChildAtPosition(container, Anchor::Center, ccp(0, -5), ccp(.5f, .5f));
+    m_mainLayer->addChildAtPosition(container, Anchor::Center, ccp(0, -10), ccp(.5f, .5f));
 
     return true;
 }
 
 void SortPopup::onSelect(CCObject* sender) {
-    m_selected = static_cast<CCMenuItemToggler*>(sender)->getTag();
+    m_selected = sender->getTag();
     for (auto option : m_options) {
         option->toggle(m_selected == option->getTag());
     }
